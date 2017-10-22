@@ -37,6 +37,11 @@
       <artifactId>spring-expression</artifactId>
       <version>4.2.4.RELEASE</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>4.2.6.RELEASE</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
     <!--这个commons-logging是apache的规范，实现需要使用log4j-->
     <dependency>
@@ -70,6 +75,25 @@
       <artifactId>spring-tx</artifactId>
       <version>4.2.4.RELEASE</version>
     </dependency>
+
+
+    <!--dbcp的连接池-->
+    <!-- https://mvnrepository.com/artifact/commons-dbcp/commons-dbcp -->
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.2.2</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/commons-pool/commons-pool -->
+
+    <!--c3p0的连接池-->
+    <!-- https://mvnrepository.com/artifact/com.mchange/c3p0 -->
+    <dependency>
+      <groupId>com.mchange</groupId>
+      <artifactId>c3p0</artifactId>
+      <version>0.9.5.2</version>
+    </dependency>
+
 
   </dependencies>
   <build>
