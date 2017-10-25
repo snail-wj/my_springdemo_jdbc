@@ -132,3 +132,65 @@
 		    	<property name="user" value="root"/>
 		    	<property name="password" value="root"/>
 		    </bean>
+		    
+### 技术分析之Spring框架的事务管理 ###
+
+**技术分析之事务的回顾**
+1. 事务：指的是逻辑上一组操作，组成这个事务的各个执行单元，要么一起成功,要么一起失败！
+
+2. 事务的特性
+	* 原子性
+	* 一致性
+	* 隔离性
+	* 持久性
+	
+3. 如果不考虑隔离性,引发安全性问题
+    * 读问题:
+        * 脏读:
+        * 不可重复读:
+        * 虚读:
+		
+    * 写问题:
+        * 丢失更新:
+
+4. 如何解决安全性问题
+    * 读问题解决，设置数据库隔离级别
+    * 写问题解决可以使用 悲观锁和乐观锁的方式解决
+    
+**技术分析之Spring框架的事务管理相关的类和API**
+	1. PlatformTransactionManager接口		-- 平台事务管理器.(真正管理事务的类)。该接口有具体的实现类，根据不同的持久层框架，需要选择不同的实现类！
+	2. TransactionDefinition接口			-- 事务定义信息.(事务的隔离级别,传播行为,超时,只读)
+	3. TransactionStatus接口				-- 事务的状态
+	
+	4. 总结：上述对象之间的关系：平台事务管理器真正管理事务对象.根据事务定义的信息TransactionDefinition 进行事务管理，在管理事务中产生一些状态.将状态记录到TransactionStatus中
+	
+	5. PlatformTransactionManager接口中实现类和常用的方法
+    		1. 接口的实现类
+    			* 如果使用的Spring的JDBC模板或者MyBatis框架，需要选择DataSourceTransactionManager实现类
+    			* 如果使用的是Hibernate的框架，需要选择HibernateTransactionManager实现类
+    		
+    		2. 该接口的常用方法
+    			* void commit(TransactionStatus status) 
+    			* TransactionStatus getTransaction(TransactionDefinition definition) 
+    			* void rollback(TransactionStatus status)
+    
+    6. TransactionDefinition
+        1. 事务隔离级别的常量
+            * static int ISOLATION_DEFAULT 					-- 采用数据库的默认隔离级别
+            * static int ISOLATION_READ_UNCOMMITTED 
+            * static int ISOLATION_READ_COMMITTED 
+            * static int ISOLATION_REPEATABLE_READ 
+            * static int ISOLATION_SERIALIZABLE 
+         
+        2. 事务的传播行为常量（不用设置，使用默认值）
+                * 先解释什么是事务的传播行为：解决的是业务层之间的方法调用！！
+                
+                * PROPAGATION_REQUIRED（默认值）	-- A中有事务,使用A中的事务.如果没有，B就会开启一个新的事务,将A包含进来.(保证A,B在同一个事务中)，默认值！！
+                * PROPAGATION_SUPPORTS			-- A中有事务,使用A中的事务.如果A中没有事务.那么B也不使用事务.
+                * PROPAGATION_MANDATORY			-- A中有事务,使用A中的事务.如果A没有事务.抛出异常.
+                
+                * PROPAGATION_REQUIRES_NEW（记）-- A中有事务,将A中的事务挂起.B创建一个新的事务.(保证A,B没有在一个事务中)
+                * PROPAGATION_NOT_SUPPORTED		-- A中有事务,将A中的事务挂起.
+                * PROPAGATION_NEVER 			-- A中有事务,抛出异常.
+                
+                * PROPAGATION_NESTED（记）		-- 嵌套事务.当A执行之后,就会在这个位置设置一个保存点.如果B没有问题.执行通过.如果B出现异常,运行客户根据需求回滚(选择回滚到保存点或者是最初始状态)
